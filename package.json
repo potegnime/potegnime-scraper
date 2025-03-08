@@ -1,0 +1,19 @@
+{
+  "name": "potegnime-scraper",
+  "version": "1.0.0",
+  "description": "Torrent scraper API for potegni.me. express.js with torrent-search-api",
+  "author": "lebaaar",
+  "license": "ISC",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "torrent-search-api": "^2.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
