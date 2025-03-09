@@ -58,15 +58,26 @@ app.get("/providers", (req, res) => {
 
 // Get available categories for enabled providers
 /*
+
+    Query parameters:
+    - lowercase: return providers in lowercase (optional, default: false)
+
+    Notes:
     torrent-search-api get all providers and their categories: TorrentSearchApi.getProviders()
 */
 app.get("/categories", (req, res) => {
     const tsaCategories = TorrentSearchApi.getProviders();
     try {
+        const returnLowerCase = req.query.lowercase === "true" || false;
         const result = tsaCategories
             .filter(provider => provider.public && providers.includes(provider.name))  // Filter by public and supported
             .reduce((acc, { name, categories }) => {
-                acc[name.toLowerCase()] = categories;  // Add to object with lowercase name
+                if (returnLowerCase) {
+                    acc[name.toLowerCase()] = categories.map(c => c.toLowerCase());
+                }
+                else {
+                    acc[name] = categories;
+                }
                 return acc;
             }, {});
 
