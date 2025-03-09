@@ -13,7 +13,7 @@ app.use(express.json()); // Middleware to parse JSON requests
 
 // Torrent settings
 console.log("Initializing torrent search API...");
-const providers = ["All", "ThePirateBay", "Yts"];
+const providers = ["All", "ThePirateBay", "Yts"]; // TODO: support more providers
 for (const provider of providers) {
     if (provider === 'All') {
         continue;
@@ -61,16 +61,17 @@ app.get("/providers", (req, res) => {
     torrent-search-api get all providers and their categories: TorrentSearchApi.getProviders()
 */
 app.get("/categories", (req, res) => {
+    const tsaCategories = TorrentSearchApi.getProviders();
     try {
-        let categories = {};
-        for (const provider of providers) {
-            if (provider.toLowerCase() === 'all') continue; // Skip "All" provider
-            categories[provider.toLowerCase()] = TorrentSearchApi.getProviders(provider);
-        }
+        const result = tsaCategories
+            .filter(provider => provider.public && providers.includes(provider.name))  // Filter by public and supported
+            .reduce((acc, { name, categories }) => {
+                acc[name.toLowerCase()] = categories;  // Add to object with lowercase name
+                return acc;
+            }, {});
 
-        return res.json(categories);
 
-        res.json({ categories: TorrentSearchApi.getProviders() });
+        return res.json(result);
     }
     catch (error) {
         res.status(500).json({ error: `Server error: ${error}` });
