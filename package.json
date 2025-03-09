@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Torrent scraper API for potegni.me. express.js with torrent-search-api",
   "author": "lebaaar",
-  "license": "ISC",
+  "license": "MIT",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
