@@ -9,6 +9,7 @@
     "dev": "nodemon index.js",
     "start": "node index.js"
   },
+  "private": true,
   "dependencies": {
     "express": "^4.21.2",
     "torrent-search-api": "^2.1.4"
