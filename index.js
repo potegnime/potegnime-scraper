@@ -56,12 +56,20 @@ app.get("/providers", (req, res) => {
     }
 });
 
-// Get available categories
+// Get available categories for enabled providers
 /*
     torrent-search-api get all providers and their categories: TorrentSearchApi.getProviders()
 */
 app.get("/categories", (req, res) => {
     try {
+        let categories = {};
+        for (const provider of providers) {
+            if (provider.toLowerCase() === 'all') continue; // Skip "All" provider
+            categories[provider.toLowerCase()] = TorrentSearchApi.getProviders(provider);
+        }
+
+        return res.json(categories);
+
         res.json({ categories: TorrentSearchApi.getProviders() });
     }
     catch (error) {
@@ -81,13 +89,11 @@ app.get("/categories", (req, res) => {
 app.get("/search", async (req, res) => {
     try {
         const { query, category = "all", source = "all", limit = 10 } = req.query;
-        /*
         // Debug
         console.log("kveri: ", query);
         console.log("kategori: ", category);
         console.log("sors: ", source);
         console.log("limit: ", limit);
-        */
         if (!query) return res.status(400).json({ error: "Query parameter is required" });
         if (!providers.map(p => p.toLowerCase()).includes(source) && source !== "all") {
             return res.status(400).json({ error: "Invalid provider" });
