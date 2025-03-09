@@ -81,14 +81,12 @@ app.get("/categories", (req, res) => {
                 return acc;
             }, {});
 
-
         return res.json(result);
     }
     catch (error) {
         res.status(500).json({ error: `Server error: ${error}` });
     }
 });
-
 
 // Search torrents
 /*
