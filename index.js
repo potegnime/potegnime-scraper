@@ -119,10 +119,16 @@ app.get("/search", async (req, res) => {
                 if (provider.toLowerCase() === 'all') continue; // Skip "All" provider
                 results[provider.toLowerCase()] = await searchTorrents(query, category, provider, limit);
             }
+            if (Object.values(results).every(providerResults => providerResults.length === 0)) {
+                return res.status(404).json({ error: "No results found" });
+            }
             return res.json(results);
         }
         else {
             results[source] = await searchTorrents(query, category, source, limit);
+            if (Object.values(results).every(providerResults => providerResults.length === 0)) {
+                return res.status(404).json({ error: "No results found" });
+            }
             return res.json(results);
         }
     } catch (error) {
