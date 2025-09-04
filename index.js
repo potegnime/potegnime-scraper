@@ -1,6 +1,6 @@
 const express = require("express");
 const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
-
+const cors = require("cors");
 
 
 /*
@@ -10,6 +10,10 @@ Initialize
 const app = express();
 const port = process.env.PORT || 1337;
 app.use(express.json()); // Middleware to parse JSON requests
+
+app.use(cors({
+    origin: "https://potegni.me"
+}));
 
 // Torrent settings
 console.log("Initializing torrent search API...");
