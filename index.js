@@ -32,6 +32,31 @@ for (const provider of providers) {
 /*
 Api routes
 */
+// root
+app.get("/", (req, res) => {
+    // Check if the client wants HTML (default) or JSON
+    const acceptHeader = req.headers.accept || '';
+    if (acceptHeader.includes('application/json')) {
+        return res.json({ message: "pong" });
+    }
+
+    // Return HTML with an image
+    const html = `
+    <!DOCTYPE html>
+    <html>
+        <head>
+        </head>
+        <body>
+            <div >
+                <img src="https://i.pinimg.com/474x/b5/15/95/b51595de229aaa7712279a7653c307f0.jpg" alt="angry cat" style="width: 300px;">
+            </div>
+        </body>
+    </html>
+    `;
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+});
+
 // Ping
 app.get("/ping", (req, res) => {
     res.json("pong");
