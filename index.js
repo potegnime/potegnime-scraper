@@ -173,6 +173,8 @@ app.get("/download", async (req, res) => {
     try {
         const { magnet } = req.query;
         if (!magnet) return res.status(400).json({ error: "Magnet parameter is required" });
+        // Dynamically import WebTorrent and get the default export
+        const { default: WebTorrent } = await import('webtorrent');
 
         const client = new WebTorrent();
         client.add(magnet, torrent => {
