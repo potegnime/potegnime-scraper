@@ -1,7 +1,10 @@
 const express = require("express");
 const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
 const cors = require("cors");
-
+let WebTorrent;
+(async () => {
+    WebTorrent = (await import('webtorrent')).default;
+})();
 
 /*
 Initialize
@@ -161,6 +164,48 @@ app.get("/search", async (req, res) => {
     }
 });
 
+// Download torrent file by magnet link
+/*
+    Query parameters:
+    - magnet: magnet link
+*/
+app.get("/download", async (req, res) => {
+    try {
+        const { magnet } = req.query;
+        if (!magnet) return res.status(400).json({ error: "Magnet parameter is required" });
+
+        const client = new WebTorrent();
+        client.add(magnet, torrent => {
+            console.log("Torrent started:", torrent.infoHash);
+
+            // Stream just the first file
+            const file = torrent.files[0];
+            console.log("Streaming file:", file.name);
+
+            res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
+            res.setHeader("Content-Type", "application/octet-stream");
+
+            const stream = file.createReadStream();
+            stream.pipe(res);
+
+            // When response finishes, destroy torrent
+            res.on("close", () => {
+                torrent.destroy(() => {
+                    console.log("Torrent closed");
+                });
+            });
+        });
+
+        // Handle errors
+        client.on('error', (err) => {
+            console.error("WebTorrent error:", err);
+            res.status(500).json({ error: `Failed to download torrent file: ${err}` });
+            client.destroy();
+        });
+    } catch (error) {
+        res.status(500).json({ error: `Server error: ${error}` });
+    }
+});
 
 
 /*
