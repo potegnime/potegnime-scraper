@@ -20,7 +20,7 @@ app.use(cors({
 
 // Torrent settings
 console.log("Initializing torrent search API...");
-const providers = ["All", "ThePirateBay", "Yts"]; // TODO: support more providers
+const providers = ["All", "Yts", "ThePirateBay"]; // TODO: support more providers
 for (const provider of providers) {
     if (provider === 'All') {
         continue;
@@ -131,13 +131,13 @@ app.get("/categories", (req, res) => {
 app.get("/search", async (req, res) => {
     try {
         const { query, category = "all", source = "all", limit = 10 } = req.query;
-        // Debug
-        console.log("kveri: ", query);
-        console.log("kategori: ", category);
-        console.log("sors: ", source);
-        console.log("limit: ", limit);
+
+        // validate query parameters
         if (!query) return res.status(400).json({ error: "Query parameter is required" });
-        if (!providers.map(p => p.toLowerCase()).includes(source) && source !== "all") {
+
+        // Validate source and set default to "all"
+        const sourceLower = source.toLowerCase();
+        if (!providers.map(p => p.toLowerCase()).includes(sourceLower) && sourceLower !== "all") {
             return res.status(400).json({ error: "Invalid provider" });
         }
 
@@ -153,7 +153,7 @@ app.get("/search", async (req, res) => {
             return res.json(results);
         }
         else {
-            results[source] = await searchTorrents(query, category, source, limit);
+            results[sourceLower] = await searchTorrents(query, category, sourceLower, limit);
             if (Object.values(results).every(providerResults => providerResults.length === 0)) {
                 return res.status(404).json({ error: "No results found" });
             }
@@ -182,7 +182,6 @@ app.get("/download", async (req, res) => {
 
             // Stream just the first file
             const file = torrent.files[0];
-            console.log("Streaming file:", file.name);
 
             res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);
             res.setHeader("Content-Type", "application/octet-stream");
