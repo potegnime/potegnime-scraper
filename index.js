@@ -15,7 +15,26 @@ const port = process.env.PORT || 1337;
 app.use(express.json()); // Middleware to parse JSON requests
 
 app.use(cors({
-    origin: "https://potegni.me"
+    origin: (origin, callback) => {
+        // allow non-browser or same-origin requests
+        if (!origin) return callback(null, true);
+        try {
+            const host = new URL(origin).hostname.toLowerCase();
+            if (host === "potegni.me") return callback(null, true);
+            if (host.endsWith(".potegnime-angular.pages.dev")) return callback(null, true);
+            if (host.endsWith(".pages.dev")) return callback(null, true);
+            const allowAny = process.env.ALLOW_ANY_CNAME;
+            if (allowAny && (allowAny === "1" || allowAny.toLowerCase() === "true")) {
+                return callback(null, true);
+            }
+        } catch (e) {
+            // invalid origin => deny
+        }
+        return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    credentials: true
 }));
 
 // Torrent settings
