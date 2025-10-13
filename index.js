@@ -39,7 +39,7 @@ app.use(cors({
 
 // Torrent settings
 console.log("Initializing torrent search API...");
-const providers = ["All", "Yts", "ThePirateBay", "Eztv", "TorrentProject", "Torrent9"]; // TODO: support more providers
+const providers = ["All", "Yts", "ThePirateBay", "Eztv", "TorrentProject"]; // TODO: support more providers
 for (const provider of providers) {
     if (provider === 'All') {
         continue;
