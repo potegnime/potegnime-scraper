@@ -39,7 +39,7 @@ app.use(cors({
 
 // Torrent settings
 console.log("Initializing torrent search API...");
-const providers = ["All", "Yts", "ThePirateBay"]; // TODO: support more providers
+const providers = ["All", "Yts", "ThePirateBay", "Eztv", "TorrentProject", "Torrent9"]; // TODO: support more providers
 for (const provider of providers) {
     if (provider === 'All') {
         continue;
@@ -189,6 +189,8 @@ app.get("/search", async (req, res) => {
     - magnet: magnet link
 */
 app.get("/download", async (req, res) => {
+    // disabled until AWS
+    return res.status(503).json({ error: "Download endpoint is temporarily disabled" });
     try {
         const { magnet } = req.query;
         if (!magnet) return res.status(400).json({ error: "Magnet parameter is required" });
