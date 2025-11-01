@@ -23,10 +23,9 @@ app.use(cors({
             if (host === "potegni.me") return callback(null, true);
             if (host.endsWith(".potegnime-angular.pages.dev")) return callback(null, true);
             if (host.endsWith(".pages.dev")) return callback(null, true);
-            const allowAny = process.env.ALLOW_ANY_CNAME;
-            if (allowAny && (allowAny === "1" || allowAny.toLowerCase() === "true")) {
-                return callback(null, true);
-            }
+
+            // debug only
+            // if (host == "localhost") return callback(null, true);;
         } catch (e) {
             // invalid origin => deny
         }
@@ -103,6 +102,7 @@ app.get("/providers", (req, res) => {
             return res.json(returnObj);
         }
     } catch (error) {
+        console.error("Error fetching providers:", error);
         res.status(500).json({ error: `Server error: ${error}` });
     }
 });
@@ -135,6 +135,7 @@ app.get("/categories", (req, res) => {
         return res.json(result);
     }
     catch (error) {
+        console.error("Error fetching categories:", error);
         res.status(500).json({ error: `Server error: ${error}` });
     }
 });
@@ -179,6 +180,7 @@ app.get("/search", async (req, res) => {
             return res.json(results);
         }
     } catch (error) {
+        console.error("Error searching torrents:", error);
         res.status(500).json({ error: `Server error: ${error}` });
     }
 });
@@ -243,6 +245,10 @@ async function searchTorrents(query, category, source, limit) {
         if (noResultsTorrent) {
             return [];
         }
+    }
+
+    if (foundTorrents.length === 0) {
+        return [];
     }
 
     return foundTorrents.map(torrent => ({
