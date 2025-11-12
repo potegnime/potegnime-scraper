@@ -1,7 +1,5 @@
-'use strict'
 const express = require("express");
-const serverless = require('serverless-http');
-const TorrentSearchApi = require("torrent-search-api");
+const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
 const cors = require("cors");
 let WebTorrent;
 (async () => {
@@ -27,8 +25,7 @@ app.use(cors({
             if (host.endsWith(".pages.dev")) return callback(null, true);
 
             // debug only
-            // TODO - check if debug version and allow localhost
-            if (host == "localhost") return callback(null, true);;
+            // if (host == "localhost") return callback(null, true);;
         } catch (e) {
             // invalid origin => deny
         }
@@ -50,6 +47,8 @@ for (const provider of providers) {
 }
 // console.warn = () => { };
 // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0"; // Bypass UNABLE_TO_VERIFY_LEAF_SIGNATURE
+
+
 
 /*
 Api routes
@@ -279,12 +278,7 @@ function getPeers(torrent) {
     return torrent.peers === "N/A" ? "?" : String(torrent.peers);
 }
 
-// Start the server only when executed directly (not when required by Lambda)
-if (require.main === module) {
-    app.listen(port, () => {
-        console.log(`Server is running at http://localhost:${port}`);
-    });
-}
-
-// Export handler for AWS Lambda
-module.exports.handler = serverless(app);
+// Start the server
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});

@@ -13,7 +13,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "serverless-http": "^4.0.0",
     "torrent-search-api": "^2.1.4",
     "webtorrent": "^2.8.4"
   },
