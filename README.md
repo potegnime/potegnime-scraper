@@ -23,10 +23,9 @@ API runs on http://localhost:1337
 - TODO
 
 ## Deployment
-API is deployed on AWS Lambda function # TODO
+For deployment consult internal [potegnime-wiki](https://github.com/potegnime/potegnime-wiki)
 
-If you want to try out the production build locally:
-
+If you want to try out the production build locally run:
 ```
 npm start
 ```
