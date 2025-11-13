@@ -32,7 +32,7 @@ app.use(cors({
             if (host.endsWith(".pages.dev")) return callback(null, true);
 
             // debug only
-            if (host == "localhost") return callback(null, true);;
+            // if (host == "localhost") return callback(null, true);;
         } catch (e) {
             // invalid origin => deny
         }
