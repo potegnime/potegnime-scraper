@@ -4,7 +4,6 @@ const cors = require("cors");
 
 // Import route controllers
 const rootRoutes = require("./routes/root");
-const pingRoutes = require("./routes/ping");
 const providersRoutes = require("./routes/providers");
 const categoriesRoutes = require("./routes/categories");
 const searchRoutes = require("./routes/search");
@@ -32,7 +31,7 @@ app.use(cors({
             if (host.endsWith(".pages.dev")) return callback(null, true);
 
             // debug only
-            // if (host == "localhost") return callback(null, true);;
+            // if (host == "localhost") return callback(null, true);
         } catch (e) {
             // invalid origin => deny
         }
@@ -57,7 +56,6 @@ for (const provider of providers) {
 Register routes
 */
 app.use("/", rootRoutes);
-app.use("/", pingRoutes);
 app.use("/", providersRoutes);
 app.use("/", categoriesRoutes);
 app.use("/", searchRoutes);
