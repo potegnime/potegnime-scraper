@@ -6,7 +6,7 @@ const router = express.Router();
  * Root endpoint
  */
 router.get("/", (req, res) => {
-    res.send("pong");
+    res.send("scraper");
 });
 
 module.exports = router;
