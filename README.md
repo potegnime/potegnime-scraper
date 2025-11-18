@@ -23,7 +23,7 @@ API runs on http://localhost:1337
 - TODO
 
 ## Deployment
-For deployment consult internal [potegnime-wiki](https://github.com/potegnime/potegnime-wiki)
+For deployment info consult internal [potegnime-wiki](https://github.com/potegnime/potegnime-wiki)
 
 If you want to try out the production build locally run:
 ```
