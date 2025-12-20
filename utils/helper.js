@@ -35,6 +35,7 @@ async function searchTorrents(query, category, source, limit) {
             imdb: torrent.imdb || "?"
         }));
     } catch (err) {
+        console.log('Search error:', err);
         // Handle provider blocks (Cloudflare / 403 pages) and other errors gracefully
         try {
             const status = err && (err.statusCode || err.status) ? (err.statusCode || err.status) : 'unknown';
