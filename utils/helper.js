@@ -1,4 +1,5 @@
 const TorrentSearchApi = require("torrent-search-api");
+const ytsSearcher = require("../scrapers/yts");
 
 /**
  * Search torrents from a specific provider or all enabled providers
@@ -10,6 +11,22 @@ const TorrentSearchApi = require("torrent-search-api");
  */
 async function searchTorrents(query, category, source, limit) {
     try {
+
+        // PATCH: Use custom YTS scraper instead of the library. Library often fails due to Cloudflare blocks.
+        if (source.toLowerCase() === 'yts') {
+            const ytsResults = await ytsSearcher.search(query, limit);
+            return ytsResults.map(torrent => ({
+                source: 'yts',
+                title: torrent.title,
+                size: torrent.size,
+                time: torrent.time || "?",
+                url: torrent.magnet || torrent.link,
+                seeds: String(torrent.seeds),
+                peers: String(torrent.peers),
+                imdb: torrent.imdb || "?"
+            }));
+        }
+
         const foundTorrents = await TorrentSearchApi.search([source], query, category, limit);
 
         // TPB specific: no results returns result titled "No results returned"
