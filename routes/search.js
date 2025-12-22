@@ -12,11 +12,11 @@ const providers = ["All", "Yts", "ThePirateBay", "Eztv", "TorrentProject"];
  * - query: search query (required)
  * - category: torrent category (optional, default: all)
  * - source: torrent provider (optional, default: all)
- * - limit: number of results to return (optional, default: 10)
+ * - limit: number of results to return (optional, default: 100)
  */
 router.get("/search", async (req, res) => {
     try {
-        const { query, category = "all", source = "all", limit = 10 } = req.query;
+        const { query, category = "all", source = "all", limit = 100 } = req.query;
 
         // Validate query parameters
         if (!query) {

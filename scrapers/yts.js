@@ -6,7 +6,7 @@ const SEARCH_URL = '/api/v2/list_movies.json';
 /**
  * Search YTS for movies
  * @param {string} query - Search query
- * @param {number} limit - Max results (default 20)
+ * @param {number} limit - Max results (default 100)
  * @returns {Promise<Array>} Array of torrent results
  */
 async function search(query, limit = 100) {
