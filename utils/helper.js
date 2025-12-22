@@ -1,5 +1,6 @@
 const TorrentSearchApi = require("torrent-search-api");
 const ytsSearcher = require("../scrapers/yts");
+const tpbSearcher = require("../scrapers/tpb");
 
 /**
  * Search torrents from a specific provider or all enabled providers
@@ -21,6 +22,21 @@ async function searchTorrents(query, category, source, limit) {
                 size: torrent.size,
                 time: torrent.time || "?",
                 url: torrent.magnet || torrent.link,
+                seeds: String(torrent.seeds),
+                peers: String(torrent.peers),
+                imdb: torrent.imdb || "?"
+            }));
+        }
+
+        // PATCH: Use custom TPB scraper instead of the library. Library often fails due to Cloudflare blocks.
+        if (source.toLowerCase() === 'thepiratebay') {
+            const tpbResults = await tpbSearcher.search(query, category, limit);
+            return tpbResults.map(torrent => ({
+                source: 'thepiratebay',
+                title: torrent.title,
+                size: torrent.size,
+                time: torrent.time || "?",
+                url: torrent.magnet,
                 seeds: String(torrent.seeds),
                 peers: String(torrent.peers),
                 imdb: torrent.imdb || "?"
