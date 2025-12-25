@@ -45,8 +45,16 @@ app.use(cors({
     credentials: true
 }));
 
+// Handle preflight requests
+app.options("*", cors());
+
 // Authentication middleware
 app.use((req, res, next) => {
+    // Allow OPTIONS requests to pass through
+    if (req.method === "OPTIONS") {
+        return next();
+    }
+
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
 
