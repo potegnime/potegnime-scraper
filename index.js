@@ -48,6 +48,11 @@ app.use(cors({
 // Handle preflight requests
 app.options("*", cors());
 
+/*
+Public routes
+*/
+app.use("/", rootRoutes);
+
 // Authentication middleware
 app.use((req, res, next) => {
     // Allow OPTIONS requests to pass through
@@ -88,9 +93,8 @@ for (const provider of providers) {
 }
 
 /*
-Register routes
+Register protected routes
 */
-app.use("/", rootRoutes);
 app.use("/", providersRoutes);
 app.use("/", categoriesRoutes);
 app.use("/", searchRoutes);
