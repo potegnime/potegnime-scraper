@@ -22,6 +22,29 @@ const port = process.env.PORT || 1337;
 // Middleware
 app.use(express.json());
 
+// CORS
+app.use(cors({
+    origin: (origin, callback) => {
+        // allow non-browser or same-origin requests
+        if (!origin) return callback(null, true);
+        try {
+            const host = new URL(origin).hostname.toLowerCase();
+            if (host === "potegni.me") return callback(null, true);
+            if (host.endsWith(".potegnime-angular.pages.dev")) return callback(null, true);
+            if (host.endsWith(".pages.dev")) return callback(null, true);
+
+            // debug only
+            // if (host == "localhost") return callback(null, true);
+        } catch (e) {
+            // invalid origin => deny
+        }
+        return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    credentials: true
+}));
+
 // Authentication middleware
 app.use((req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -45,29 +68,6 @@ app.use((req, res, next) => {
         next();
     });
 });
-
-// CORS
-app.use(cors({
-    origin: (origin, callback) => {
-        // allow non-browser or same-origin requests
-        if (!origin) return callback(null, true);
-        try {
-            const host = new URL(origin).hostname.toLowerCase();
-            if (host === "potegni.me") return callback(null, true);
-            if (host.endsWith(".potegnime-angular.pages.dev")) return callback(null, true);
-            if (host.endsWith(".pages.dev")) return callback(null, true);
-
-            // debug only
-            // if (host == "localhost") return callback(null, true);
-        } catch (e) {
-            // invalid origin => deny
-        }
-        return callback(new Error("Not allowed by CORS"));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-    credentials: true
-}));
 
 // Initialize torrent search API
 console.log("Initializing torrent search API...");
