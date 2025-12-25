@@ -1,6 +1,9 @@
 const express = require("express");
-const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
+
+const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
 
 // Import route controllers
 const rootRoutes = require("./routes/root");
@@ -18,6 +21,30 @@ const port = process.env.PORT || 1337;
 
 // Middleware
 app.use(express.json());
+
+// Authentication middleware
+app.use((req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!authHeader) {
+        return res.status(401).json({ error: 'JWT missing' });
+    }
+
+    const appKey = process.env.POTEGNIME_APP_KEY;
+    const issuer = process.env.JWT_ISSUER;
+    const audience = process.env.JWT_AUDIENCE;
+    const details = { algorithms: ["HS512"], issuer: issuer, audience: audience };
+
+    jwt.verify(token, appKey, details, (err, user) => {
+        if (err) {
+            console.error("JWT_VERIFICATION_FAILED:", err);
+            return res.status(403).json({ error: 'Forbidden' });
+        }
+        req.user = user;
+        next();
+    });
+});
 
 // CORS
 app.use(cors({
