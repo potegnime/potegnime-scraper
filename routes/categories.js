@@ -6,7 +6,7 @@ const providers = ["All", "Yts", "ThePirateBay", "Eztv", "TorrentProject"];
 
 /**
  * GET /categories
- * Get available categories for enabled providers
+ * Get available categories for enabled providers. Not called from frontend anymore, but kept here just in case. Angular now has its own hardcoded categories.
  *
  * Query parameters:
  * - lowercase: return categories in lowercase (optional, default: false)
