@@ -75,7 +75,7 @@ app.use((req, res, next) => {
     jwt.verify(token, appKey, details, (err, user) => {
         if (err) {
             console.error("JWT_VERIFICATION_FAILED:", err);
-            return res.status(403).json({ error: 'Forbidden' });
+            return res.status(401).json({ error: 'Unauthorized' });
         }
         req.user = user;
         next();
