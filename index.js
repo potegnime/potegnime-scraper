@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const path = require("path");
 require('dotenv').config();
 
 const TorrentSearchApi = require("torrent-search-api");  // https://www.npmjs.com/package/torrent-search-api?activeTab=readme
@@ -48,6 +50,16 @@ app.use(cors({
 // Handle preflight requests
 app.options("*", cors());
 
+// Load public key for JWT verification
+let publicKey = null;
+try {
+    const keyPath = path.join(__dirname, "keys", "public.pem");
+    publicKey = fs.readFileSync(keyPath, "utf8");
+} catch (err) {
+    console.error("Failed to load public key from keys/public.pem:", err.message);
+    process.exit(1);
+}
+
 /*
 Public routes
 */
@@ -67,12 +79,11 @@ app.use((req, res, next) => {
         return res.status(401).json({ error: 'JWT missing' });
     }
 
-    const appKey = process.env.POTEGNIME_APP_KEY;
     const issuer = process.env.JWT_ISSUER;
     const audience = process.env.JWT_AUDIENCE;
-    const details = { algorithms: ["HS512"], issuer: issuer, audience: audience };
+    const details = { algorithms: ["RS256"], issuer: issuer, audience: audience };
 
-    jwt.verify(token, appKey, details, (err, user) => {
+    jwt.verify(token, publicKey, details, (err, user) => {
         if (err) {
             console.error("JWT_VERIFICATION_FAILED:", err);
             return res.status(401).json({ error: 'Unauthorized' });
