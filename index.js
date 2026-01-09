@@ -35,8 +35,8 @@ app.use(cors({
             if (host.endsWith(".potegnime-angular.pages.dev")) return callback(null, true);
             if (host.endsWith(".pages.dev")) return callback(null, true);
 
-            // debug only
-            // if (host == "localhost") return callback(null, true);
+            // allow localhost in development
+            if (process.env.NODE_ENV === "development" && host === "localhost") return callback(null, true);
         } catch (e) {
             // invalid origin => deny
         }
