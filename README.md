@@ -4,7 +4,6 @@ To learn more about the project, visit [GitHub organization](https://github.com/
 
 ## Overview
 - **Framework:** ExpressJS
-- **Torrent scrapper:** [torrent-search-api](https://www.npmjs.com/package/torrent-search-api?activeTab=readme)
 
 ## Development
 Prerequisites:
