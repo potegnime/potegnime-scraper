@@ -1,6 +1,13 @@
 const axios = require('axios');
 
-const BASE_URL = 'https://apibay.org';
+// List of API mirrors to try (in order of preference)
+const API_MIRRORS = [
+    'https://apibay.org',
+    'https://thepiratebay.org/apibay',
+    'https://pirateproxy.live/apibay'
+];
+
+const BASE_URL = API_MIRRORS[0];
 const SEARCH_URL = '/q.php';
 
 const CATEGORIES = {
@@ -14,6 +21,40 @@ const CATEGORIES = {
 };
 
 /**
+ * Try to fetch from multiple API mirrors
+ * @param {string} url - URL path
+ * @param {object} config - Axios config
+ * @returns {Promise} Axios response
+ */
+async function fetchWithFallback(url, config) {
+    let lastError;
+    
+    for (const mirror of API_MIRRORS) {
+        try {
+            const fullUrl = `${mirror}${url}`;
+            console.log(`Trying mirror: ${mirror}`);
+            const response = await axios.get(fullUrl, config);
+            
+            // Check if we got Cloudflare blocked
+            if (response.status === 403 || 
+                (typeof response.data === 'string' && response.data.includes('Just a moment'))) {
+                throw new Error('Cloudflare blocked');
+            }
+            
+            console.log(`Success with mirror: ${mirror}`);
+            return response;
+        } catch (err) {
+            console.log(`Failed with mirror ${mirror}:`, err.message);
+            lastError = err;
+            // Continue to next mirror
+        }
+    }
+    
+    // All mirrors failed
+    throw lastError;
+}
+
+/**
  * Search ThePirateBay for torrents
  * @param {string} query - Search query
  * @param {string} category - Category (all, audio, video, applications, games, porn, other)
@@ -23,15 +64,25 @@ const CATEGORIES = {
 async function search(query, category = 'all', limit = 100) {
     try {
         const cat = CATEGORIES[category.toLowerCase()] || '';
-        const url = `${BASE_URL}${SEARCH_URL}`;
 
-        const response = await axios.get(url, {
+        const response = await fetchWithFallback(SEARCH_URL, {
             params: {
                 q: query,
                 cat: cat
             },
             headers: {
-                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept': 'application/json, text/plain, */*',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Referer': 'https://apibay.org/',
+                'Origin': 'https://apibay.org',
+                'Connection': 'keep-alive',
+                'Sec-Fetch-Dest': 'empty',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Site': 'same-origin',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             },
             timeout: 10000
         });
@@ -141,5 +192,6 @@ module.exports = {
     formatMagnet,
     humanizeSize,
     BASE_URL,
-    CATEGORIES
+    CATEGORIES,
+    API_MIRRORS
 };
