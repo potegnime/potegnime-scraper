@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = 'https://movies-api.accel.li/api/v2/';
+const BASE_URL = 'https://movies-api.accel.li';
 const SEARCH_URL = '/api/v2/list_movies.json';
 
 /**
