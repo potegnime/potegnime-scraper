@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = 'https://yts.lt';
+const BASE_URL = 'https://yts.bz';
 const SEARCH_URL = '/api/v2/list_movies.json';
 
 /**
